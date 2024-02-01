@@ -1,4 +1,4 @@
-Kanban Board CLI
+# Kanban Board CLI
 
 This project is a command-line interface (CLI) for managing a Kanban board. It's written in Go and uses a JSON file for data persistence.
 
