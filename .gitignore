@@ -20,6 +20,9 @@ vendor/
 # build output
 kanban
 
+# app database
+*.db
+
 # Go workspace file
 go.work
 
