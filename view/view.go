@@ -5,6 +5,7 @@ import (
 	"kanban/logger"
 	"kanban/utils"
 	"strings"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -51,6 +52,7 @@ type KanbanModel struct {
 	dbService   utils.DBService
 	selected    map[int]bool // selected items
 	lists       [][]ListItem // Changed from []list.Model
+	msgs        chan tea.Msg
 	board       board.Board
 	newCard     board.Card
 	addCard     bool
@@ -92,10 +94,21 @@ func (m *KanbanModel) InitializeLists() {
 	}
 }
 
-func (m *KanbanModel) AddCard(listIndex int, cardTitle string) {
+func (m *KanbanModel) AddCard(listIndex int, cardTitle string, cardDescription string, cardDueDate time.Time, cardStartDate time.Time, cardEndDate time.Time, cardDuration time.Duration) {
 	cardList := m.board.CardLists[listIndex]
-	cardList.Cards = append(cardList.Cards, board.Card{Title: cardTitle})
+	cardList.Cards = append(cardList.Cards, board.Card{ID: m.GenerateUUID(), Title: cardTitle, Description: cardDescription, DueDate: cardDueDate, StartDate: cardStartDate, EndDate: cardEndDate, Duration: cardDuration})
 	m.board.CardLists[listIndex] = cardList
+	items := m.lists[listIndex]
+	items = append(items, ListItem{title: cardTitle})
+	m.lists[listIndex] = items
+	logger.Log.Println("New board: ", m.board)
+	logger.Log.Println("Card added to list:", listIndex)
+	err := m.SaveCard()
+	if err != nil {
+		logger.Log.Println("Error saving board:", err)
+	} else {
+		logger.Log.Println("Board saved successfully")
+	}
 }
 
 func (m *KanbanModel) RemoveCard(listIndex int, cardIndex int) {
@@ -107,11 +120,11 @@ func (m *KanbanModel) RemoveCard(listIndex int, cardIndex int) {
 func (m *KanbanModel) MoveCard(fromListIndex int, toListIndex int, cardIndex int) {
 	card := m.board.CardLists[fromListIndex].Cards[cardIndex]
 	m.RemoveCard(fromListIndex, cardIndex)
-	m.AddCard(toListIndex, card.Title)
+	m.AddCard(toListIndex, card.Title, card.Description, card.DueDate, card.StartDate, card.EndDate, card.Duration)
 }
 
-func (m *KanbanModel) SaveBoard() error {
-	return m.dbService.UpdateBoard(m.board)
+func (m *KanbanModel) SaveCard() error {
+	return m.dbService.InsertCard(m.newCard, m.board.CardLists[m.cursor].ID)
 }
 
 func (m *KanbanModel) AddList(listTitle string) {
@@ -151,22 +164,15 @@ func (m *KanbanModel) Init() tea.Cmd {
 	return nil // You can return a command if needed
 }
 
+type refreshMsg struct{}
+
 func (m *KanbanModel) handleAddCard(key string) {
 	switch key {
 	case "/":
 		if m.newCard.Title != "" {
 			m.addCard = false
-			m.AddCard(m.cursor, m.newCard.Title)
+			m.AddCard(m.cursor, m.newCard.Title, "description 123", m.newCard.DueDate, m.newCard.StartDate, m.newCard.EndDate, m.newCard.Duration)
 			m.newCard = board.Card{}
-			// Force a re-render by updating the model
-			m = &KanbanModel{
-				board:     m.board,
-				dbService: m.dbService,
-				cursor:    m.cursor,
-				selected:  m.selected,
-				addCard:   m.addCard,
-				newCard:   m.newCard,
-			}
 		}
 	case "backspace":
 		if len(m.newCard.Title) > 0 {
