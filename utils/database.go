@@ -28,7 +28,7 @@ type DBService interface {
 	DeleteBoard(boardID string) error
 	DeleteCardList(cardListID string) error
 	DeleteCard(cardID string) error
-	UpdateBoard(board board.Board) error
+	UpdateBoardTitle(boardID string, title string) error
 	UpdateCardList(cardList board.CardList) error
 	UpdateCard(card board.Card) error
 }

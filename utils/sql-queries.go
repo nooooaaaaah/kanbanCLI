@@ -165,9 +165,9 @@ func (handler *DbHandler) GetCards(cardList *board.CardList) error {
 	return nil
 }
 
-func (handler *DbHandler) UpdateBoard(board board.Board) error {
+func (handler *DbHandler) UpdateBoardTitle(boardID string, title string) error {
 	stmt := `UPDATE Boards SET Title = ? WHERE ID = ?;`
-	if _, err := handler.db.Exec(stmt, board.Title, board.ID); err != nil {
+	if _, err := handler.db.Exec(stmt, title, boardID); err != nil {
 		logger.Log.Println(err)
 		return err
 	}
