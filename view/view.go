@@ -59,6 +59,11 @@ type KanbanModel struct {
 	cursor      int // cursor position
 }
 
+// Generate a UUID for new items
+func (m *KanbanModel) GenerateUUID() string {
+	return utils.GenerateUUID()
+}
+
 // InitializeDB initializes the database service.
 func (m *KanbanModel) InitializeDB() error {
 	var err error

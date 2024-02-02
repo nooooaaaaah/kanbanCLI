@@ -5,6 +5,7 @@ import (
 	"kanban/board"
 	"kanban/logger"
 
+	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -48,4 +49,9 @@ func InitializeDBService() (*DbHandler, error) {
 		return nil, err
 	}
 	return NewDbHandler(db), nil
+}
+
+// Genereate UUIDs for the board, cardlist, and cardlist
+func GenerateUUID() string {
+	return uuid.New().String()
 }

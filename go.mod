@@ -10,6 +10,7 @@ require (
 require (
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/charmbracelet/lipgloss v0.9.1 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/nsf/termbox-go v1.1.1 // indirect
 	github.com/sahilm/fuzzy v0.1.1-0.20230530133925-c48e322e2a8f // indirect
 )
