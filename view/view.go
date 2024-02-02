@@ -182,7 +182,7 @@ func (m *KanbanModel) handleAddCard(key string) {
 func (m *KanbanModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case error:
-		// handle the error, perhaps by setting an error field in your model
+		logger.Log.Println(msg)
 		return m, nil
 	case tea.KeyMsg:
 		switch msg.String() {

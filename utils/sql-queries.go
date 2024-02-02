@@ -82,8 +82,11 @@ func (handler *DbHandler) InsertCardList(cardList board.CardList, boardID string
 func (handler *DbHandler) InsertCard(card board.Card, listID string) error {
 	stmt := `INSERT INTO Cards (ID, Title, Description, StartDate, EndDate, DueDate, Duration, ListID) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
 	_, err := handler.db.Exec(stmt, card.ID, card.Title, card.Description, card.StartDate, card.EndDate, card.DueDate, card.Duration, listID)
-	logger.Log.Println(err)
-	return err
+	if err != nil {
+		logger.Log.Println("Error Inserting a new card: ", err)
+		return err
+	}
+	return nil
 }
 
 func (handler *DbHandler) GetBoard(boardID string) (board.Board, error) {
@@ -180,6 +183,7 @@ func (handler *DbHandler) UpdateCardList(cardList board.CardList) error {
 		logger.Log.Println(err)
 		return err
 	}
+	logger.Log.Println("CardList updated successfully")
 	return nil
 }
 
@@ -189,6 +193,7 @@ func (handler *DbHandler) UpdateCard(card board.Card) error {
 		logger.Log.Println(err)
 		return err
 	}
+	logger.Log.Println("Card updated successfully")
 	return nil
 }
 
