@@ -167,11 +167,28 @@ func (m *KanbanModel) Init() tea.Cmd {
 type refreshMsg struct{}
 
 func (m *KanbanModel) handleAddCard(key string) {
+	var err error
 	switch key {
 	case "/":
 		if m.newCard.Title != "" {
 			m.addCard = false
-			m.AddCard(m.cursor, m.newCard.Title, "description 123", m.newCard.DueDate, m.newCard.StartDate, m.newCard.EndDate, m.newCard.Duration)
+
+			// need to add taking in these fields from the user
+			m.newCard.Description = "test description"
+			m.newCard.StartDate, err = time.Parse("2006-01-01", "2024-01-02")
+			if err != nil {
+				logger.Log.Println(err)
+			}
+			m.newCard.EndDate, err = time.Parse("2006-01-01", "2025-01-02")
+			if err != nil {
+				logger.Log.Println(err)
+			}
+			m.newCard.DueDate, err = time.Parse("2006-01-01", "2045-01-02")
+			if err != nil {
+				logger.Log.Println(err)
+			}
+			m.newCard.Duration = 10
+			m.AddCard(m.cursor, m.newCard)
 			m.newCard = board.Card{}
 		}
 	case "backspace":

@@ -144,18 +144,18 @@ func (handler *DbHandler) GetCards(cardList *board.CardList) error {
 			logger.Log.Println(err)
 			return err
 		}
-		parsedEndDate, err := time.Parse("2006-01-02", endDate)
+		parsedEndDate, err := time.Parse("2006-01-01 15:04:05-07:00", endDate)
 		if err != nil {
 			logger.Log.Println(err)
 			return err
 		}
 
-		parsedDueDate, err := time.Parse("2006-01-02", dueDate)
+		parsedDueDate, err := time.Parse("2006-01-01 15:04:05-07:00", dueDate)
 		if err != nil {
 			logger.Log.Println(err)
 			return err
 		}
-		parsedStartDate, err := time.Parse("2006-01-02", startDate)
+		parsedStartDate, err := time.Parse("2006-01-01 15:04:05-07:00", startDate)
 		if err != nil {
 			logger.Log.Println(err)
 			return err
