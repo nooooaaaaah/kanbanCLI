@@ -94,12 +94,15 @@ func (m *KanbanModel) InitializeLists() {
 	}
 }
 
-func (m *KanbanModel) AddCard(listIndex int, cardTitle string, cardDescription string, cardDueDate time.Time, cardStartDate time.Time, cardEndDate time.Time, cardDuration time.Duration) {
+func (m *KanbanModel) AddCard(listIndex int, newCard board.Card) {
 	cardList := m.board.CardLists[listIndex]
-	cardList.Cards = append(cardList.Cards, board.Card{ID: m.GenerateUUID(), Title: cardTitle, Description: cardDescription, DueDate: cardDueDate, StartDate: cardStartDate, EndDate: cardEndDate, Duration: cardDuration})
+	newCardID := m.GenerateUUID()
+	newCard.ID = newCardID
+	logger.Log.Println("New card:", newCard)
+	cardList.Cards = append(cardList.Cards, newCard)
 	m.board.CardLists[listIndex] = cardList
 	items := m.lists[listIndex]
-	items = append(items, ListItem{title: cardTitle})
+	items = append(items, ListItem{title: newCard.Title})
 	m.lists[listIndex] = items
 	logger.Log.Println("New board: ", m.board)
 	logger.Log.Println("Card added to list:", listIndex)
@@ -120,7 +123,7 @@ func (m *KanbanModel) RemoveCard(listIndex int, cardIndex int) {
 func (m *KanbanModel) MoveCard(fromListIndex int, toListIndex int, cardIndex int) {
 	card := m.board.CardLists[fromListIndex].Cards[cardIndex]
 	m.RemoveCard(fromListIndex, cardIndex)
-	m.AddCard(toListIndex, card.Title, card.Description, card.DueDate, card.StartDate, card.EndDate, card.Duration)
+	m.AddCard(toListIndex, card)
 }
 
 func (m *KanbanModel) SaveCard() error {
